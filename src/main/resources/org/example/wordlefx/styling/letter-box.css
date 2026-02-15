@@ -1,0 +1,9 @@
+#rectangle {
+    -fx-fill: white;
+    -fx-stroke-width: 3;
+}
+
+#letter {
+    -fx-font-weight: bold;
+    -fx-font-size: 50px;
+}

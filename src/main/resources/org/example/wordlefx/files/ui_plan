@@ -1,0 +1,10 @@
+ /*
+            check user keycode via event lambda NOT AllowedKey enum.
+            if its a valid word -> update UI:
+                change current LetterBox label then move on to the next one
+            if user clicks enter:
+                check if we are at the end of column. If so,
+                                                        then check answer then move on to the next row
+            if user clicks backspace:
+                set current letterbox label to an empty string & go back to the previous letterbox
+             */

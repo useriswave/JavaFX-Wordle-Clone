@@ -1,0 +1,64 @@
+#root-vbox {
+    -fx-background-color: white;
+    -fx-padding: 30px;
+
+}
+
+#state {
+    -fx-font-weight: bold;
+    -fx-font-size: 30px;
+}
+
+#description {
+    -fx-font-size: 15px;
+}
+
+#word-box {
+    -fx-spacing: 20px;
+    -fx-background-radius: 5px;
+}
+
+#word-title {
+    -fx-font-size: 12px;
+    -fx-text-fill: #c9c9c9;
+}
+
+#word {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+#quit-button {
+    -fx-background-color:  white;
+    -fx-text-fill:  black;
+    -fx-font-weight:  bold;
+    -fx-cursor:  hand;
+    -fx-border-color:  #c9c9c9;
+    -fx-border-width:  2px;
+    -fx-border-radius:  10px;
+    -fx-background-radius:  15px;
+}
+
+
+
+.correct {
+    -fx-background-color: #6aa74f;
+    -fx-text-fill: white;
+    -fx-font-weight:  bold;
+    -fx-cursor:  hand;
+    -fx-border-color:  #6aa74f;
+    -fx-border-width:  2px;
+    -fx-border-radius:  10px;
+    -fx-background-radius:  15px;
+}
+
+.incorrect {
+       -fx-background-color: red;
+       -fx-text-fill: white;
+       -fx-font-weight:  bold;
+       -fx-cursor:  hand;
+       -fx-border-color:  red;
+       -fx-border-width:  2px;
+       -fx-border-radius:  10px;
+       -fx-background-radius:  15px;
+}
