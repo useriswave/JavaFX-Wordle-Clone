@@ -16,31 +16,30 @@ import org.example.wordlefx.logic.Algorithm;
 import org.example.wordlefx.popups.ResultPopUp;
 import org.example.wordlefx.popups.WordNotExist;
 import org.example.wordlefx.shapes.LetterBox;
-
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 
 public class CenterPane extends GridPane {
 
+    private final int COLUMNS = 5;
+    private final int ROWS = 6;
     private int currentRow = 0;
     private int currentColumn = 0;
     private final LetterBox[][] gridList;
     private String answer = "";
-    private final Word word;
     private String generatedWord;
-    private boolean procceed;
+    private boolean proceed;
     private GameState gameState;
     boolean won = false;
-    private static int attempts = 1;
+    private int attempts = 1;
 
     public CenterPane() throws FileNotFoundException {
 
-        word = new Word();
+        Word word = new Word();
         generatedWord = word.getWord();
         gameState = GameState.PLAY;
         System.out.println("WORD: " + word.getWord());
-        int COLUMNS = 5;
-        int ROWS = 6;
+
         gridList = new LetterBox[ROWS][COLUMNS];
         for(int i = 0; i < ROWS; i++) {
             for(int j = 0; j < COLUMNS; j++) {
@@ -63,16 +62,20 @@ public class CenterPane extends GridPane {
             KeyCode eventCode = event.getCode();
             boolean containsLetter = AllowedKey.isLetter(eventCode);
 
-            if(containsLetter && currentColumn <= 4) {
+            if(containsLetter && currentColumn <= (COLUMNS - 1)) {
                 updateIU(gridList, currentRow, currentColumn, eventCode);
                 answer += eventCode.toString();
                 currentColumn++;
-                System.out.println("ANSWER STRING : " + answer + " COLUMN: " + currentColumn);
-
+                System.out.println("Answer: " + answer);
             }
 
-            else if(eventCode == KeyCode.ENTER && currentColumn == 5) {
-                enterKeyHandler(stage);
+            else if(eventCode == KeyCode.ENTER && currentColumn == COLUMNS) {
+                try {
+                    GuessOutcome outcome = checkCorrect(currentRow, stage);
+                    enterKeyHandler(stage, outcome);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             else if(eventCode == KeyCode.BACK_SPACE) {
@@ -81,7 +84,7 @@ public class CenterPane extends GridPane {
                 currentColumn--;
                 answer = answer.substring(0, answer.length() - 1);
                 backSpaceHandler(currentRow, currentColumn, gridList);
-                System.out.println(answer);
+                System.out.println("Answer: " + answer);
 //               set current letterbox label to an empty string & go back to the previous letterbox
             }
         });
@@ -104,20 +107,14 @@ public class CenterPane extends GridPane {
             for (int i = 0; i < letterStatesList.length; i++) {
                 if (letterStatesList[i] == LetterState.CORRECT) {
                     System.out.println("CORRECT!");
-                    gridList[currentRow][i].getRectangle().setFill(CustomColor.CUSTOM_GREEN);
-                    gridList[currentRow][i].getRectangle().setStroke(CustomColor.CUSTOM_GREEN);
-                    gridList[currentRow][i].getLetter().setStyle("-fx-text-fill: white;");
+                    gridList[currentRow][i].changeLbAppearance(CustomColor.CUSTOM_GREEN, CustomColor.CUSTOM_GREEN, Color.WHITE);
                 } else if (letterStatesList[i] == LetterState.PRESENT) {
                     System.out.println("PRESENT!");
-                    gridList[currentRow][i].getRectangle().setFill(CustomColor.CUSTOM_YELLOW);
-                    gridList[currentRow][i].getRectangle().setStroke(CustomColor.CUSTOM_YELLOW);
-                    gridList[currentRow][i].getLetter().setStyle("-fx-text-fill: white;");
+
+                    gridList[currentRow][i].changeLbAppearance(CustomColor.CUSTOM_YELLOW, CustomColor.CUSTOM_YELLOW, Color.WHITE);
                 } else {
                     System.out.println("WRONG!");
-                    gridList[currentRow][i].getRectangle().setFill(CustomColor.INCORRECT_GRAY);
-                    gridList[currentRow][i].getRectangle().setStroke(CustomColor.INCORRECT_GRAY);
-                    gridList[currentRow][i].getLetter().setStyle("-fx-text-fill: white;");
-
+                    gridList[currentRow][i].changeLbAppearance(CustomColor.INCORRECT_GRAY, CustomColor.INCORRECT_GRAY, Color.WHITE);
                 }
             }
 
@@ -138,63 +135,52 @@ public class CenterPane extends GridPane {
         gridList[currentRow][currentColumn].getRectangle().setStroke(CustomColor.FILLED_GRAY);
     }
 
-    public void enterKeyHandler(Stage stage) {
-//               check if we are at the end of column. If so,then check answer then move on to the next row
-        try {
-            GuessOutcome outcome = checkCorrect(currentRow, stage);
+    public void enterKeyHandler(Stage stage, GuessOutcome outcome) throws FileNotFoundException {
+//        check if we are at the end of column. If so,then check answer then move on to the next rowGuessOutcome outcome = checkCorrect(currentRow, stage);
+        if(outcome == GuessOutcome.WIN) {
+            won = true;
+            System.out.println("YOU WON" + "BOOLEAN WON: " + won);
 
 
-
-            if(outcome == GuessOutcome.WIN) {
-                won = true;
-                System.out.println("YOU WON" + "BOOLEAN WON: " + won);
-
-
-                System.out.println("Game State: " + gameState);
+            System.out.println("Game State: " + gameState);
+        }
+        else if(outcome == GuessOutcome.INVALID_WORD) {
+            proceed = false;
+        }
+        else {
+            if(currentColumn == COLUMNS && currentRow == (ROWS - 1)) {
+                won = false;
+                System.out.println("WIN BOOLEAN: " + won);
             }
-            else if(outcome == GuessOutcome.INVALID_WORD) {
-                procceed = false;
+
+
+            System.out.println("USER DIDNT WIN YET.");
+            proceed = true;
+        }
+
+        if(won || (currentColumn == COLUMNS && currentRow == (ROWS - 1))) {
+            var winPopUp = new ResultPopUp();
+            gameState = winPopUp.showPopUp(stage, generatedWord, gameState, won, attempts);
+
+            if(gameState == GameState.PLAY) {
+                restart();
             }
             else {
-                if(currentColumn == 5 && currentRow == 5) {
-                    won = false;
-                    System.out.println("WIN BOOLEAN: " + won);
-                }
-
-
-                System.out.println("USER DIDNT WIN YET.");
-                procceed = true;
+                stage.close();
             }
+        }
 
-            if(won || (currentColumn == 5 && currentRow == 5)) {
-                var winPopUp = new ResultPopUp();
-                gameState = winPopUp.showPopUp(stage, generatedWord, gameState, won, attempts);
-
-                if(gameState == GameState.PLAY) {
-                    restart();
-                }
-                else {
-                    stage.close();
-                }
-            }
-
-
-            if(procceed) {
-                attempts++;
-                currentRow++;
-                currentColumn = 0;
-                answer = "";
-                System.out.println("CURRENT ROW: " + currentRow);
-            }
-
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        if(proceed) {
+            attempts++;
+            currentRow++;
+            currentColumn = 0;
+            answer = "";
+            System.out.println("CURRENT ROW: " + currentRow);
         }
     }
 
     public void backSpaceHandler(int currentRow, int currentColumn, LetterBox[][] gridList) {
-        gridList[currentRow][currentColumn].getLetter().setText("");
-        gridList[currentRow][currentColumn].getRectangle().setStroke(CustomColor.DEFAULT_GRAY);
+        gridList[currentRow][currentColumn].resetLbAppearance();
     }
 
     public boolean checkWinState(LetterState[] letterStatesList) {
@@ -211,16 +197,14 @@ public class CenterPane extends GridPane {
         currentRow = 0;
         currentColumn = 0;
         generatedWord = Word.generateRandomWord();
-        procceed = false;
+        proceed = false;
         won = false;
         answer = "";
-        System.out.println(generatedWord);
+        System.out.println("Word: " + generatedWord);
 
-        for(int i = 0; i < gridList.length; i++) {
-            for (int j = 0; j < gridList[i].length; j++) {
-                gridList[i][j].getLetter().setText("");
-                gridList[i][j].getRectangle().setStroke(CustomColor.DEFAULT_GRAY);
-                gridList[i][j].getRectangle().setFill(Color.WHITE);
+        for (LetterBox[] letterBoxes : gridList) {
+            for (LetterBox letterBox : letterBoxes) {
+                letterBox.resetLbAppearance();
             }
         }
 

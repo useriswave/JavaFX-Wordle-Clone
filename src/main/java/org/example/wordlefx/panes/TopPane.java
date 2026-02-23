@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import org.example.wordlefx.enums.Constant;
 
 public class TopPane extends StackPane {
 
@@ -20,7 +21,7 @@ public class TopPane extends StackPane {
         bar.setPadding(new Insets(10, 30, 10, 30));
 
         Label name = new Label("@useriswave");
-        Label title = new Label("WORDLE");
+        Label title = new Label(Constant.TITLE.getIdentifier());
         title.setStyle("-fx-font-weight: bold;\n" +
                        "-fx-font-size: 30;");
         title.setAlignment(Pos.CENTER);
