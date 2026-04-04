@@ -25,13 +25,13 @@ public class CenterPane extends GridPane {
     private final int ROWS = 6;
     private int currentRow = 0;
     private int currentColumn = 0;
-    private final LetterBox[][] gridList;
-    private String answer = "";
-    private String generatedWord;
     private boolean proceed;
-    private GameState gameState;
-    boolean won = false;
+    private boolean won = false;
     private int attempts = 1;
+    private String generatedWord;
+    private String answer = "";
+    private GameState gameState;
+    private final LetterBox[][] gridList;
 
     public CenterPane() throws FileNotFoundException {
 
@@ -85,7 +85,6 @@ public class CenterPane extends GridPane {
                 answer = answer.substring(0, answer.length() - 1);
                 backSpaceHandler(currentRow, currentColumn, gridList);
                 System.out.println("Answer: " + answer);
-//               set current letterbox label to an empty string & go back to the previous letterbox
             }
         });
 
@@ -93,13 +92,14 @@ public class CenterPane extends GridPane {
 
     public GuessOutcome checkCorrect(int currentRow, Stage stage) throws FileNotFoundException {
 
-        var letterStatesList = Algorithm.checkAnswerType(generatedWord, answer, gridList, currentRow);
+        var letterStatesList = Algorithm.checkAnswerType(generatedWord, answer);
 
         if(letterStatesList[0] == LetterState.INVALID_WORD) {
             new WordNotExist(stage).showAndWait();
             System.out.println("ANSWER DOES NOT EXIST IN WORD BANK");
             return GuessOutcome.INVALID_WORD;
         }
+
 
 
         else {
@@ -110,7 +110,6 @@ public class CenterPane extends GridPane {
                     gridList[currentRow][i].changeLbAppearance(CustomColor.CUSTOM_GREEN, CustomColor.CUSTOM_GREEN, Color.WHITE);
                 } else if (letterStatesList[i] == LetterState.PRESENT) {
                     System.out.println("PRESENT!");
-
                     gridList[currentRow][i].changeLbAppearance(CustomColor.CUSTOM_YELLOW, CustomColor.CUSTOM_YELLOW, Color.WHITE);
                 } else {
                     System.out.println("WRONG!");
@@ -136,7 +135,6 @@ public class CenterPane extends GridPane {
     }
 
     public void enterKeyHandler(Stage stage, GuessOutcome outcome) throws FileNotFoundException {
-//        check if we are at the end of column. If so,then check answer then move on to the next rowGuessOutcome outcome = checkCorrect(currentRow, stage);
         if(outcome == GuessOutcome.WIN) {
             won = true;
             System.out.println("YOU WON" + "BOOLEAN WON: " + won);
@@ -192,6 +190,7 @@ public class CenterPane extends GridPane {
         return true;
     }
 
+
     public void restart() throws FileNotFoundException {
         attempts = 1;
         currentRow = 0;
@@ -207,6 +206,5 @@ public class CenterPane extends GridPane {
                 letterBox.resetLbAppearance();
             }
         }
-
     }
 }

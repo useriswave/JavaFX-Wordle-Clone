@@ -2,7 +2,6 @@ package org.example.wordlefx.logic;
 
 import org.example.wordlefx.enums.LetterState;
 import org.example.wordlefx.external.Word;
-import org.example.wordlefx.shapes.LetterBox;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -10,7 +9,7 @@ import java.util.HashMap;
 public class Algorithm {
     private static HashMap<Character, Integer> letterMap;
 
-    public static LetterState[] checkAnswerType(String word, String answer, LetterBox[][] grid, int currentRow) throws FileNotFoundException {
+    public static LetterState[] checkAnswerType(String word, String answer) throws FileNotFoundException {
         LetterState[] letterStateList = new LetterState[5];
         answer = answer.toUpperCase();
         word = word.toUpperCase();

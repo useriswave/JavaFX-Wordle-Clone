@@ -8,32 +8,15 @@ import java.util.Scanner;
 
 public class Word {
 
-    private static String path = "C:/Users/user/IdeaProjects/WordleFX/src/main/resources/org/example/wordlefx//files/words.txt";
-    private static File wordsFile = new File(path);
-    private static Random random;
-    private static long randomIndex;
+    private static final String path = "C:/Users/user/IdeaProjects/WordleFX/src/main/resources/org/example/wordlefx//files/words.txt";
+    private static final File wordsFile = new File(path);
     private String word;
     public Word() throws FileNotFoundException {this.word = generateRandomWord();}
 
-    public static boolean checkWords(String answer) throws FileNotFoundException {
-        String word;
-        Scanner sc = new Scanner(wordsFile);
-        while(sc.hasNextLine()) {
-            word = sc.nextLine();
-            if(answer.equalsIgnoreCase(word)) {
-                System.out.println("Word correct!");
-                sc.close();
-                return true;
-            }
-        }
-        sc.close();
-        return false;
-    }
-
     public static String generateRandomWord() throws FileNotFoundException {
         int length = getFileContentSize();
-        random = new Random();
-        randomIndex = random.nextLong(0, length);
+        Random random = new Random();
+        long randomIndex = random.nextLong(0, length);
         String randomWord =  getRandomWord(randomIndex);
 
         if(randomWord == null) {
@@ -102,6 +85,4 @@ public class Word {
     public String getWord() {
         return word;
     }
-
-
 }

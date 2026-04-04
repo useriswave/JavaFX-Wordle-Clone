@@ -33,11 +33,6 @@ public class LetterBox extends StackPane{
     public Rectangle getRectangle() {
         return rectangle;
     }
-    public void changeLbAppearance(String text, Color fillColor, Color strokeColor) {
-        changeText(text);
-        changeRectFill(fillColor);
-        changeRectStroke(strokeColor);
-    }
 
     public void changeLbAppearance(Color rectangleFillColor, Color strokeColor, Color letterFillColor) {
         changeRectFill(rectangleFillColor);

@@ -19,7 +19,6 @@ public class Main extends Application {
         var root = new RootPane();
         String letterBoxCss = Objects.requireNonNull(this.getClass().getResource("/org/example/wordlefx/styling/letter-box.css")).toExternalForm();
 
-
         Scene scene = new Scene(root, 1200, 800);
 
         stage.setScene(scene);
